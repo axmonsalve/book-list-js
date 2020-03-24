@@ -25,24 +25,32 @@ UI.prototype.addBookToList = function(book) {
 };
 
 //Show alert
-UI.prototype.showAlert = function(msg, className){
+UI.prototype.showAlert = function(msg, className) {
   //Create div
-  const div = document.createElement('div');
+  const div = document.createElement("div");
   //Add classes
   div.className = `alert ${className}`;
   //Add Text
   div.appendChild(document.createTextNode(msg));
   //Get parent
-  const container = document.querySelector('.container');
-  const form = document.querySelector('#book-form');
+  const container = document.querySelector(".container");
+  const form = document.querySelector("#book-form");
   //Insert alert
-  container.insertBefore(div, form);
+  container.insertBefore(div, form.nextSibling);
 
   //Timeout after 3 seconds
-  setTimeout(function(){
-    document.querySelector('.alert').remove();
+  setTimeout(function() {
+    document.querySelector(".alert").remove();
   }, 3000);
-}
+};
+
+//Delete book
+UI.prototype.deleteBook = function(target) {
+  if (target.className === "delete") {
+    target.parentElement.parentElement.remove();
+    this.showAlert('Book deleted!', 'success');
+  }
+};
 
 //Clear fields
 UI.prototype.clearFields = function() {
@@ -51,7 +59,7 @@ UI.prototype.clearFields = function() {
   document.getElementById("isbn").value = "";
 };
 
-//Event listeners
+//Event listeners for add book
 document.getElementById("book-form").addEventListener("submit", function(e) {
   e.preventDefault();
   //Get form values
@@ -67,17 +75,27 @@ document.getElementById("book-form").addEventListener("submit", function(e) {
 
   //Validate
   if (title === "" || author === "" || isbn === "") {
-    //Error alert 
-    ui.showAlert('Please, fill in all fields', 'error');
+    //Error alert
+    ui.showAlert("Please, fill in all fields", "error");
     return;
   } else {
     //Add book to list
     ui.addBookToList(book);
 
     //Show success
-    ui.showAlert('Book added!', 'success')
+    ui.showAlert("Book added!", "success");
 
     //Clear fields
     ui.clearFields();
   }
+});
+
+//Event Listener for delete book
+document.getElementById("book-list").addEventListener("click", function(e) {
+  e.preventDefault();
+  //Instantiate UI
+  const ui = new UI();
+  
+  //Delete Book
+  ui.deleteBook(e.target);
 });
